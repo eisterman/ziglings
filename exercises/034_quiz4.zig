@@ -11,10 +11,12 @@ const NumError = error{IllegalNumber};
 
 pub fn main() void {
     const stdout = std.io.getStdOut().writer();
-
-    const my_num: u32 = getNumber();
-
-    try stdout.print("my_num={}\n", .{my_num});
+    // TODO: e' possibile ottenere un if-expression con blocchi multiriga { } senza supporto per esempio di uno switch?
+    const my_num: u32 = if (getNumber()) |n| n else |err| switch (err) {
+        NumError.IllegalNumber => 42,
+    };
+    stdout.print("my_num={}\n", .{my_num}) catch {};
+    // Alternativa tenere try stdout.print e cambiare il returntype di main da void a anyerror!void
 }
 
 // This function is obviously weird and non-functional. But you will not be changing it for this quiz.
